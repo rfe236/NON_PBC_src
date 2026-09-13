@@ -832,10 +832,10 @@ const double ylo = -0.5 * Ly;
 const double zlo = -0.5 * Lz;
 
 for (size_t i = 0; i < q_M.size(); i++) {
-    q_M[i][0] = wrapPosition(q_M[i][0], xlo, Lx);
+      q_M[i][0] = wrapPosition(q_M[i][0], xlo, Lx);
     q_M[i][1] = wrapPosition(q_M[i][1], ylo, Ly);
     q_M[i][2] = wrapPosition(q_M[i][2], zlo, Lz);
-}
+  }
 
 for (size_t i = 0; i < q_H.size(); i++) {
     q_H[i][0] = wrapPosition(q_H[i][0], xlo, Lx);
@@ -849,7 +849,6 @@ for (size_t i = 0; i < q_H.size(); i++) {
     sigma_M0 = sigma_M;
     sigma_H0  = sigma_H;
     x0 = x;
-
     if (input.file.local_nei == 1) {
 
     MM.clear();
@@ -896,16 +895,96 @@ for (size_t i = 0; i < q_H.size(); i++) {
     }
 
     MPI_Barrier(comm);
+// ============================================================
+// SECOND MINIMIZATION USING UPDATED NEIGHBOR LIST
+// ============================================================
+
+q_M = q_M0;
+q_H = q_H0;
+
+sigma_M = sigma_M0;
+sigma_H = sigma_H0;
+
+x = x0;
+
+obj_fun = 0.0;
+
+if (!MPI_rank) {
+    cout << "# Starting second Max-Ent using updated neighbors."
+         << endl;
+    cout.flush();
 }
 
-        if (!MPI_rank) {
-            cout << "# Done with post-minimization "
-                    "local neighbor search."
-                 << endl;
-            cout.flush();
-        }
+err = minimizer.minimizeFreeEntropy(
+    mubd,
+    q_M0,
+    q_H0,
+    sigma_M0,
+    sigma_H0,
+    x0,
+    q_M,
+    q_H,
+    sigma_M,
+    sigma_H,
+    x,
+    obj_fun
+);
 
-        MPI_Barrier(comm);
+if (err) {
+    PetscPrintf(
+        MPI_COMM_WORLD,
+        "ERROR: second minimization failed at strain %g.\n",
+        strain
+    );
+
+    MPI_Abort(
+        MPI_COMM_WORLD,
+        static_cast<int>(err)
+    );
+}
+
+MPI_Barrier(comm);
+
+if (!MPI_rank) {
+    cout << "# Done with second Max-Ent." << endl;
+    cout.flush();
+}
+
+
+// Save second-minimization result
+q_M0 = q_M;
+q_H0 = q_H;
+
+sigma_M0 = sigma_M;
+sigma_H0 = sigma_H;
+
+x0 = x;
+
+
+// Wrap final coordinates
+for (size_t i = 0; i < q_M0.size(); i++) {
+    q_M0[i][0] = wrapPosition(q_M0[i][0], xlo, Lx);
+    q_M0[i][1] = wrapPosition(q_M0[i][1], ylo, Ly);
+    q_M0[i][2] = wrapPosition(q_M0[i][2], zlo, Lz);
+}
+
+for (size_t i = 0; i < q_H0.size(); i++) {
+    q_H0[i][0] = wrapPosition(q_H0[i][0], xlo, Lx);
+    q_H0[i][1] = wrapPosition(q_H0[i][1], ylo, Ly);
+    q_H0[i][2] = wrapPosition(q_H0[i][2], zlo, Lz);
+}
+
+MPI_Barrier(comm);
+    }
+
+      //  if (!MPI_rank) {
+      //      cout << "# Done with post-minimization "
+      //              "local neighbor search."
+      //           << endl;
+      //      cout.flush();
+      //  }
+
+       // MPI_Barrier(comm);
            
  //     if(!MPI_rank) {
  //       cout << "# Done with local neighbor search using a KDTree. Max. number of neighbors: " << maxNeighbors << ". " << endl;
@@ -957,7 +1036,10 @@ for (size_t i = 0; i < q_H.size(); i++) {
       }
       MPI_Barrier(comm); 
     }      
+    MPI_Barrier(comm);
 
+
+    
     // write time history of macroscropic results to file
     if(!MPI_rank) {
       result_file << "  " << scientific << iFrame << "  " << scientific << strain << "  " << scientific << Fxx << "  " << scientific << mubd << " " <<scientific << xH << " " << scientific << free_energy << " "<< scientific << obj_fun << endl;
