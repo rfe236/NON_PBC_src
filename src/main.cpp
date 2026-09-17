@@ -2,7 +2,7 @@
  * Copyright © Kevin G. Wang, Xingsheng Sun, 2015
  * (1) Redistribution and use in source and binary forms, with or without modification,
  *     are permitted, provided that this copyright notice is retained.
- * (2) Use at your own risk.
+ * (2) Use at your own risk...
  **********************************************************************************/
 #include <stdio.h>
 #include <iostream>
@@ -10,7 +10,7 @@
 #include <time.h>
 #include <mpi.h>
 #include "Vector3D.h"
-#include "input.h"
+#include "input.h"ß
 #include "output.h"
 #include "minimizer.h"
 #include "cubic_spline.h"
