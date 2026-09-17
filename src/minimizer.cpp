@@ -1729,7 +1729,7 @@ for (int i=0; i<Ub_q_H.size(); i++) {
         //Lb_q_H[i] = Vec3D(PETSC_NINFINITY, PETSC_NINFINITY, PETSC_NINFINITY);
         //Ub_q_H[i] = Vec3D(PETSC_INFINITY,  PETSC_INFINITY,  PETSC_INFINITY);
         Lb_sigma_H[i] = 1.0e-6;
-        Ub_sigma_H[i] = PETSC_INFINITY;
+        Ub_sigma_H[i] = 0.5;
         Lb_x_H[i] = 1.0e-16;
         Ub_x_H[i] = 1.0 - 1.0e-16;
 }
