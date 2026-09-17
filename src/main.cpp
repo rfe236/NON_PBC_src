@@ -2,7 +2,7 @@
  * Copyright © Kevin G. Wang, Xingsheng Sun, 2015
  * (1) Redistribution and use in source and binary forms, with or without modification,
  *     are permitted, provided that this copyright notice is retained.
- * (2) Use at your own risk...
+ * (2) Use at your own risk.....
  **********************************************************************************/
 #include <stdio.h>
 #include <iostream>
