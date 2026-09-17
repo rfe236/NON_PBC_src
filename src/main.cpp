@@ -990,6 +990,20 @@ if(!MPI_rank) {
 
       result_file.flush();
     }
+    // Physical sanity check: sigma must stay near atomic scale
+double sig_max = 0.0;
+for (size_t i = 0; i < sigma_H0.size(); i++)
+    sig_max = std::max(sig_max, sigma_H0[i]);
+
+bool frame_ok = (sig_max < 0.5);   // 0.5 Angstrom ceiling
+
+if (!frame_ok) {
+    if (!MPI_rank)
+        cout << "*** Frame " << iFrame << " (strain " << strain
+             << ") REJECTED: sigma_max = " << sig_max
+             << " Angstrom — non-physical, skipping output ***" << endl;
+    continue;   // don't write, don't warm-start from this
+}
     // write solution to file
     output.output_solution(iFrame, iTimeStep, q_M0, q_H0, sigma_M0, sigma_H0, x0, gamma, f, V_M, V_H, pi_M, pi_H, full_H, nH_oct, nH_tet, input);
     MPI_Barrier(comm);
