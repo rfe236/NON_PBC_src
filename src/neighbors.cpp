@@ -3,6 +3,7 @@
 #include "Vector3D.h"
 #include "KDTree.h"
 #include "input.h"
+#include <mpi.h>
 using namespace std;
 
 int findNeighbors(double a_M, double rc, double Lx, double Ly, double Lz, int pbc, vector<Vec3D> &q_M0, vector<Vec3D> &q_H0,
@@ -195,10 +196,13 @@ bool insideBox = (g[0]>loX && g[0]<hiX) && (g[1]>loY && g[1]<hiY) && (g[2]>loZ &
         if(c > cmax) cmax = c;
     }
 
-    cout << "EXT M-M pool coordination: min=" << cmin
-         << " max=" << cmax << endl;
+int rank = 0;
+MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
- 
+if (rank == 0) {
+    cout << "EXT M-M pool coordination: min="
+         << cmin << " max=" << cmax << endl;
+} 
 //  vector<int> tmp1; //a zero vector
 //  tmp1.assign(3, 0);
 
