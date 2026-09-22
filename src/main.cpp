@@ -10,7 +10,7 @@
 #include <time.h>
 #include <mpi.h>
 #include "Vector3D.h"
-#include "input.h"ß
+#include "input.h"
 #include "output.h"
 #include "minimizer.h"
 #include "cubic_spline.h"
@@ -277,7 +277,7 @@ int maxNeighbors_ext = 0;
   vector<int> HAdsorp;
 // Fixed chemical potential
   const double kB = 8.6173324e-5;
-const double mubd = -2.23; // eV
+const double mubd = -2.35; // eV
 gammabd = mubd / (kB * input.file.T0);
 // Prescribed strain range
 const double strain_lower = -0.09;
@@ -986,24 +986,10 @@ if(!MPI_rank) {
 
     // write time history of macroscropic results to file
     if(!MPI_rank) {
-      result_file << "  " << scientific << iFrame << "  " << scientific << strain << "  " << scientific << Fxx << "  " << scientific << mubd << " " <<scientific << xH << " " << scientific << free_energy << " "<< scientific << obj_fun << endl;
+      result_file << "  " << scientific << iFrame << "  " << scientific << strain << "  " << scientific << Fxx << "  " << scientific << mubd<< "  " << scientific << xH_oct << "  " << scientific << xH_tet << "  " << scientific << xH_total << " " <<scientific << xH << " " << scientific << free_energy << " "<< scientific << obj_fun << endl;
 
       result_file.flush();
     }
-    // Physical sanity check: sigma must stay near atomic scale
-double sig_max = 0.0;
-for (size_t i = 0; i < sigma_H0.size(); i++)
-    sig_max = std::max(sig_max, sigma_H0[i]);
-
-bool frame_ok = (sig_max < 0.5);   // 0.5 Angstrom ceiling
-
-if (!frame_ok) {
-    if (!MPI_rank)
-        cout << "*** Frame " << iFrame << " (strain " << strain
-             << ") REJECTED: sigma_max = " << sig_max
-             << " Angstrom — non-physical, skipping output ***" << endl;
-    continue;   // don't write, don't warm-start from this
-}
     // write solution to file
     output.output_solution(iFrame, iTimeStep, q_M0, q_H0, sigma_M0, sigma_H0, x0, gamma, f, V_M, V_H, pi_M, pi_H, full_H, nH_oct, nH_tet, input);
     MPI_Barrier(comm);
