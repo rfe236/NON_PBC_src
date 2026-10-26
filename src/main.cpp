@@ -277,12 +277,12 @@ int maxNeighbors_ext = 0;
   vector<int> HAdsorp;
 // Fixed chemical potential
   const double kB = 8.6173324e-5;
-const double mubd = -2.35; // eV
+const double mubd = -2.29; // eV
 gammabd = mubd / (kB * input.file.T0);
 // Prescribed strain range
-const double strain_lower = -0.09;
-const double strain_upper =  0.09;
-const double strain_step  =  0.01;
+const double strain_lower = -5.0e-4;
+const double strain_upper =  5.0e-4;
+const double strain_step  =  1.0e-4;
 
 const int number_of_strains =
     static_cast<int>(

@@ -1364,7 +1364,7 @@ double Lz = application_context->input->file.N * a_M;
            r = minimumImage(r, Lx, Ly, Lz);
           r_ij += QWp*r;
           F_ij +=x0[i]*QWp*eam.F_H_deriv(application_context->recv_H[i], CSembed, CSrho, CSpair)*eam.f_M_deriv(r.norm(), CSembed, CSrho, CSpair)/r.norm()*r;
-          F_ij +=QWp*eam.F_M_deriv(application_context->recv_M[jj], CSembed, CSrho, CSpair)*eam.f_H_deriv(r.norm(), CSembed, CSrho, CSpair)/r.norm()*r;
+          F_ij +=x0[i]*QWp*eam.F_M_deriv(application_context->recv_M[jj], CSembed, CSrho, CSpair)*eam.f_H_deriv(r.norm(), CSembed, CSrho, CSpair)/r.norm()*r;
 
           // calculate gradient for pair energy
           F_ij +=x0[i]* QWp*eam.phi_MH_deriv(r.norm(), CSembed, CSrho, CSpair)/r.norm()*r;
@@ -1731,7 +1731,7 @@ for (int i=0; i<Ub_q_H.size(); i++) {
         Lb_sigma_H[i] = 1.0e-6;
         Ub_sigma_H[i] = 0.5;
         Lb_x_H[i] = 1.0e-16;
-        Ub_x_H[i] = 1.0 - 1.0e-16;
+        Ub_x_H[i] = 1-1.0e-16;
 }
 //for (int i=0; i<Ub_q_M.size(); i++) {
  //       Lb_q_M[i] = app->q_M0[i];      // freeze at deformed position
